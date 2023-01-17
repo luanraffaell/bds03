@@ -2,6 +2,8 @@ package com.lrcs.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +38,7 @@ public class EmployeeController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<EmployeeDTO> insert(@RequestBody EmployeeDTO employee){
+	public ResponseEntity<EmployeeDTO> insert(@Valid @RequestBody EmployeeDTO employee){
 		EmployeeDTO insert = employeeService.insert(employee);
 		return ResponseEntity.status(HttpStatus.CREATED).body(insert);
 	}

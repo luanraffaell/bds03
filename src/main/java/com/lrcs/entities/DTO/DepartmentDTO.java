@@ -1,10 +1,13 @@
 package com.lrcs.entities.DTO;
 
+import javax.validation.constraints.NotBlank;
+
 import com.lrcs.entities.Department;
 
 public class DepartmentDTO {
 	
 	private Long id;
+	@NotBlank
 	private String name;
 	
 	public DepartmentDTO(Long id, String name) {

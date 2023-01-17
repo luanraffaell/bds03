@@ -7,10 +7,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -42,6 +44,37 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, standardError,new HttpHeaders(), status, request);
 	}
 	
+	
+	
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		String detail = "One or more fields are invalid. Fill in correctly and try again.";
+		ValidationError err = new ValidationError();
+		String path = ((ServletWebRequest) request).getRequest().getRequestURI();
+		
+		err.setTimeStamp(Instant.now());
+		err.setMessage(detail);
+		err.setPath(path);
+		err.setStatus(status.value());
+		err.setError(ProblemType.DADOS_INVALIDOS.getTitle());
+		ex.getBindingResult().getFieldErrors().forEach(x -> err.addErrors(x.getField(), x.getDefaultMessage()));
+		return handleExceptionInternal(ex, err,new HttpHeaders(), status, request);
+	}
+
+
+
+	@Override
+	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request) {
+		String requestURL = ex.getRequestURL();
+		String detail = String.format("The resource '%s', which you tried to access, does not exist.", requestURL);
+		StandardError createstandardError = createStandardError(detail, ProblemType.RECURSO_NAO_ENCONTRADO, status.value(), requestURL);
+		return handleExceptionInternal(ex,createstandardError, headers, status, request);
+	}
+
+
+
 	private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, HttpStatus status, WebRequest request){
 		ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
 		String path = ex.getPath().stream().map(ref -> ref.getFieldName()).collect(Collectors.joining("."));

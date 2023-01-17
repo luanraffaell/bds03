@@ -1,12 +1,20 @@
 package com.lrcs.entities.DTO;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.lrcs.entities.Employee;
 
 public class EmployeeDTO {
 	
 	private Long id;
+	
+	@NotBlank
 	private String name;
+	@Email
 	private String email;
+	@NotNull
 	private Long departmentId;
 	
 	public EmployeeDTO(Long id, String name, String email, Long departmentId) {

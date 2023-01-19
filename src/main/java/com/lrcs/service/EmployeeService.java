@@ -3,6 +3,8 @@ package com.lrcs.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.lrcs.entities.Department;
@@ -33,7 +35,7 @@ public class EmployeeService {
 		Employee employee = employeeRepository.findById(id).orElseThrow(() ->  new EntityNotFoundException("Employee not found"));
 		 return new EmployeeDTO(employee);
 	}
-	
+	@Transactional
 	public EmployeeDTO insert(EmployeeDTO employeeDTO) {
 		Employee employee = new Employee();
 		copyToEntity(employeeDTO, employee);

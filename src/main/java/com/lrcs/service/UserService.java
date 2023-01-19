@@ -3,6 +3,8 @@ package com.lrcs.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,6 +37,7 @@ public class UserService implements UserDetailsService {
 		 return new UserDTO(user);
 	}
 	
+	@Transactional
 	public UserDTO insert(UserDTO userDTO) {
 		User user = new User();
 		copyToEntity(userDTO, user);
